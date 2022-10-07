@@ -28,56 +28,68 @@ func sendingLoggy(client *loggly.ClientType, msgType string, msg string) {
 	}
 }
 
-func main() {
-	var tag string
-	tag = "My-Go-Demo"
-
-	// Instantiate the client
-	client := loggly.New(tag)
-
-	// Get tokens from .env/ choose query for API
-	accessKey := os.Getenv("ACCESS_KEY")
-	location := "Oswego"
-
-	// Create a new request using http
-	url := "https://api.weatherstack.com/current"
-	req, _ := http.NewRequest("GET", url, nil)
+func createRequest(url string, method string, accessKey string, location string) *http.Request {
+	req, _ := http.NewRequest(method, url, nil)
 	q := req.URL.Query()
 	q.Add("access_key", accessKey)
 	q.Add("query", location)
 	req.URL.RawQuery = q.Encode()
+	return req
+}
 
-	// Send req using http Client
+func main() {
+	// Get tokens from .env/ choose query for API
+	accessKey := os.Getenv("ACCESS_KEY")
+
+	// Instantiate the loggly client and the http client
+	logglyClient := loggly.New("Weather-App")
 	weatherClient := http.Client{
 		Timeout: time.Second * 2, // Timeout after 2 seconds
 	}
-	resp, sendErr := weatherClient.Do(req)
-	if sendErr == nil {
-		sendingLoggy(client, "info", "Successfully send the request to API")
-	} else {
-		sendingLoggy(client, "error", "Failed with error: "+sendErr.Error())
+
+	// Create a new request using http
+	url := "http://api.weatherstack.com/current"
+	method := "GET"
+	location := "New York"
+
+	request := createRequest(url, method, accessKey, location)
+
+	count := 0
+	for true {
+		// Send req using http Client
+		resp, sendErr := weatherClient.Do(request)
+		if sendErr == nil {
+			sendingLoggy(logglyClient, "info", "Successfully send the request to API")
+		} else {
+			sendingLoggy(logglyClient, "error", "Failed with error: "+sendErr.Error())
+		}
+
+		//Read the response body
+		body, readErr := ioutil.ReadAll(resp.Body)
+		if readErr == nil {
+			sendingLoggy(logglyClient, "info", "Successfully read the response body")
+		} else {
+			sendingLoggy(logglyClient, "error", "Failed with error: "+readErr.Error())
+		}
+
+		//Unmarshall the response into the data structure
+		var data structure.Data
+		unmarshallErr := json.Unmarshal(body, &data)
+		if unmarshallErr != nil {
+			return
+		}
+
+		// Print the data on the console
+		formattedData, _ := json.MarshalIndent(data, "", "    ")
+		fmt.Println(string(formattedData))
+
+		// Send success message to loggly with response size
+		var respSize = strconv.Itoa(len(body))
+		sendingLoggy(logglyClient, "info", "Successful data collection of size: "+respSize)
+
+		// Count the request sending times
+		count++
+		fmt.Printf("This is the time %v the GET request is sent\n", count)
+		time.Sleep(30 * time.Minute)
 	}
-
-	//Read the response body
-	body, readErr := ioutil.ReadAll(resp.Body)
-	if readErr == nil {
-		sendingLoggy(client, "info", "Successfully read the response body")
-	} else {
-		sendingLoggy(client, "error", "Failed with error: "+readErr.Error())
-	}
-
-	//Unmarshall the response into the data structure
-	var data structure.Data
-	unmarshallErr := json.Unmarshal(body, &data)
-	if unmarshallErr != nil {
-		return
-	}
-
-	// Print the data on the console
-	formattedData, _ := json.MarshalIndent(data, "", "    ")
-	fmt.Println(string(formattedData))
-
-	// Send success message to loggly with response size
-	var respSize = strconv.Itoa(len(body))
-	sendingLoggy(client, "info", "Successful data collection of size: "+respSize)
 }
