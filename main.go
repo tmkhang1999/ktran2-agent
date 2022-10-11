@@ -1,25 +1,16 @@
 package main
 
 import (
-	structure "CSC482/modules"
+	"CSC482/utils"
 	"encoding/json"
 	"fmt"
 	"github.com/jamespearly/loggly"
-	"github.com/joho/godotenv"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"time"
 )
-
-func init() {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-}
 
 func sendingLoggy(client *loggly.ClientType, msgType string, msg string) {
 	err := client.EchoSend(msgType, msg)
@@ -38,21 +29,18 @@ func createRequest(url string, method string, accessKey string, location string)
 }
 
 func main() {
-	// Get tokens from .env/ choose query for API
-	accessKey := os.Getenv("ACCESS_KEY")
+	// Load variables
+	config, err := utils.LoadConfig("./", "config.yaml")
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	// Instantiate the loggly client and the http client
 	logglyClient := loggly.New("Weather-App")
-	weatherClient := http.Client{
-		Timeout: time.Second * 2, // Timeout after 2 seconds
-	}
+	weatherClient := http.Client{Timeout: time.Second * 2}
 
 	// Create a new request using http
-	url := "http://api.weatherstack.com/current"
-	method := "GET"
-	location := "New York"
-
-	request := createRequest(url, method, accessKey, location)
+	request := createRequest(config.Url, config.Method, config.AccessKey, config.Location)
 
 	count := 0
 	for true {
@@ -73,7 +61,7 @@ func main() {
 		}
 
 		//Unmarshall the response into the data structure
-		var data structure.Data
+		var data utils.Data
 		unmarshallErr := json.Unmarshal(body, &data)
 		if unmarshallErr != nil {
 			return
@@ -90,6 +78,6 @@ func main() {
 		// Count the request sending times
 		count++
 		fmt.Printf("This is the time %v the GET request is sent\n", count)
-		time.Sleep(30 * time.Minute)
+		time.Sleep(config.Time * time.Minute)
 	}
 }

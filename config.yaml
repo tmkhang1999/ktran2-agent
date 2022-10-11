@@ -1,0 +1,4 @@
+URL: "http://api.weatherstack.com/current"
+METHOD: "GET"
+QUERY: "Oswego"
+TIME: 30

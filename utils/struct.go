@@ -1,4 +1,4 @@
-package modules
+package utils
 
 type Request struct {
 	Type     string `json:"type"`
