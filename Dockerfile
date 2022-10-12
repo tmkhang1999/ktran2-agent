@@ -1,12 +1,24 @@
+## First stage - Build stage
 # Pull golang image from Dockerhub
-FROM golang:latest
+FROM golang:alpine AS builder
 
 # Set up the working directory
-WORKDIR /app
+WORKDIR /app1
 
 # copy the source code, then run build command
 COPY . .
-RUN go build .
+RUN go build -o weather .
+
+## Second stage - Run stage
+FROM alpine:latest
+
+# Set up the working directory
+WORKDIR /app2
+
+# Copy the executable binary file, env file and config file from the last stage to the new stage
+COPY --from=builder /app1/weather .
+COPY --from=builder /app1/.env .
+COPY --from=builder /app1/config.yaml .
 
 # Execute the build
-CMD ["./CSC482"]
+CMD ["./weather"]
