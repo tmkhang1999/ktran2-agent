@@ -40,7 +40,7 @@ func main() {
 	weatherClient := http.Client{Timeout: time.Second * 2}
 
 	// Create a new request using http
-	request := createRequest(config.Url, config.Method, config.AccessKey, config.Location)
+	request := createRequest(config.Url, config.Method, config.AccessKey, config.Query)
 
 	count := 0
 	for true {

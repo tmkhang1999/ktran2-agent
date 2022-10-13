@@ -17,10 +17,10 @@ func init() {
 }
 
 type Config struct {
-	Url      string        `yaml:"URL"`
-	Method   string        `yaml:"METHOD"`
-	Location string        `yaml:"QUERY"`
-	Time     time.Duration `yaml:"TIME"`
+	Url    string        `yaml:"URL"`
+	Method string        `yaml:"METHOD"`
+	Query  string        `yaml:"QUERY"`
+	Time   time.Duration `yaml:"TIME"`
 
 	AccessKey string
 }
