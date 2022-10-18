@@ -38,6 +38,10 @@ func main() {
 	// Instantiate the loggly client and the http client
 	logglyClient := loggly.New("Weather-App")
 	weatherClient := http.Client{Timeout: time.Second * 2}
+	awsClient := utils.CreateDynamoDBClient(config.Region)
+
+	// Set up the AWS table
+	utils.SetUpTableAWS(config.TableName, awsClient)
 
 	// Create a new request using http
 	request := createRequest(config.Url, config.Method, config.AccessKey, config.Query)
@@ -74,6 +78,9 @@ func main() {
 		// Send success message to loggly with response size
 		var respSize = strconv.Itoa(len(body))
 		sendingLoggy(logglyClient, "info", "Successful data collection of size: "+respSize)
+
+		// ...
+		utils.PutItemInput(config.TableName, data, awsClient)
 
 		// Count the request sending times
 		count++

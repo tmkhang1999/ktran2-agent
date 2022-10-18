@@ -9,8 +9,10 @@ require (
 
 require (
 	github.com/TwiN/go-color v1.1.0 // indirect
+	github.com/aws/aws-sdk-go v1.44.115 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect

@@ -22,6 +22,9 @@ type Config struct {
 	Query  string        `yaml:"QUERY"`
 	Time   time.Duration `yaml:"TIME"`
 
+	TableName string `yaml:"TABLENAME"`
+	Region    string `yaml:"REGION"`
+
 	AccessKey string
 }
 

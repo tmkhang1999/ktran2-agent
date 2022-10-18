@@ -43,3 +43,9 @@ type Data struct {
 	Location Location `json:"location"`
 	Current  Current  `json:"current"`
 }
+
+type Item struct {
+	Location string
+	Time     string
+	Data     Data
+}
