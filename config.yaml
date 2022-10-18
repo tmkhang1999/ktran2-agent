@@ -1,4 +1,6 @@
 URL: "http://api.weatherstack.com/current"
 METHOD: "GET"
 QUERY: "Oswego"
-TIME: 30
+TIME: 3
+TABLENAME: "ktran2_weather_v1"
+REGION: "us-east-1"
