@@ -1,12 +1,12 @@
 package utils
 
 import (
+	"CSC482/structs"
 	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 	"log"
 	"os"
 	"strings"
-	"time"
 )
 
 func init() {
@@ -16,19 +16,7 @@ func init() {
 	}
 }
 
-type Config struct {
-	Url    string        `yaml:"URL"`
-	Method string        `yaml:"METHOD"`
-	Query  string        `yaml:"QUERY"`
-	Time   time.Duration `yaml:"TIME"`
-
-	TableName string `yaml:"TABLENAME"`
-	Region    string `yaml:"REGION"`
-
-	AccessKey string
-}
-
-func LoadConfig(path string, fileName string) (config Config, err error) {
+func LoadConfig(path string, fileName string) (config structs.Config, err error) {
 	// Load config file formatted in .yaml
 	split := strings.Split(fileName, ".")
 	viper.AddConfigPath(path)

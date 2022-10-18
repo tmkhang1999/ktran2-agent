@@ -1,4 +1,4 @@
-package utils
+package structs
 
 type Request struct {
 	Type     string `json:"type"`
@@ -42,10 +42,4 @@ type Data struct {
 	Request  Request  `json:"request"`
 	Location Location `json:"location"`
 	Current  Current  `json:"current"`
-}
-
-type Item struct {
-	Location string
-	Time     string
-	Data     Data
 }
