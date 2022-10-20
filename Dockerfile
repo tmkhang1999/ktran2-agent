@@ -6,7 +6,7 @@ FROM golang:alpine AS builder
 WORKDIR /app1
 
 # copy the source code, then run build command
-COPY . .
+COPY ./modules .
 RUN go build -o weather .
 
 ## Second stage - Run stage
@@ -17,8 +17,8 @@ WORKDIR /app2
 
 # Copy the executable binary file, env file and config file from the last stage to the new stage
 COPY --from=builder /app1/weather .
-COPY --from=builder /app1/.env .
-COPY --from=builder /app1/config.yaml .
+COPY .env .
+COPY config.yaml .
 
 # Execute the build
 CMD ["./weather"]
