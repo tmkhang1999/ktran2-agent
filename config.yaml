@@ -1,6 +1,15 @@
 URL: "http://api.weatherstack.com/current"
 METHOD: "GET"
-QUERY: "Oswego"
+QUERY:
+  - "Syracuse"
+  - "Oswego"
+  - "Hanoi"
+  - "Haiphong"
+  - "Vancouver"
+  - "Dallas"
+  - "Boston"
+  - "Austin"
+  - "Toronto"
 TIME: 3
 TABLENAME: "ktran2_weather_v1"
 REGION: "us-east-1"
