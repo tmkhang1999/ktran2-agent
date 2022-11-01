@@ -1,19 +1,22 @@
 package utils
 
 import (
-	"CSC482/structs"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/oleiade/reflections"
 	"log"
+	"main.go/structs"
+	"reflect"
 	"time"
 )
 
 func CreateDynamoDBClient(region string) *dynamodb.DynamoDB {
 	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(region)},
+		Region: aws.String(region),
+	},
 	)
 	if err != nil {
 		log.Fatalf("Got error initializing AWS: %s", err)
@@ -33,11 +36,11 @@ func createTable(tableName string, client *dynamodb.DynamoDB) {
 		// Represents an attribute for describing the key schema for the table and indexes.
 		AttributeDefinitions: []*dynamodb.AttributeDefinition{
 			{
-				AttributeName: aws.String("Location"),
+				AttributeName: aws.String("name"),
 				AttributeType: aws.String("S"),
 			},
 			{
-				AttributeName: aws.String("Time"),
+				AttributeName: aws.String("localtime"),
 				AttributeType: aws.String("S"),
 			},
 		},
@@ -45,12 +48,12 @@ func createTable(tableName string, client *dynamodb.DynamoDB) {
 		KeySchema: []*dynamodb.KeySchemaElement{
 			// Partition key
 			{
-				AttributeName: aws.String("Location"),
+				AttributeName: aws.String("name"),
 				KeyType:       aws.String("HASH"),
 			},
 			// Sort key
 			{
-				AttributeName: aws.String("Time"),
+				AttributeName: aws.String("localtime"),
 				KeyType:       aws.String("RANGE"),
 			},
 		},
@@ -110,15 +113,6 @@ func SetUpTableAWS(tableName string, awsClient *dynamodb.DynamoDB) {
 	<-timer2.C
 }
 
-func createItemForAWS(data structs.Data) structs.Item {
-	var item structs.Item
-	item.Location = data.Request.Query
-	item.Time = data.Location.Localtime
-	item.Data = data
-
-	return item
-}
-
 func PutItemInput(tableName string, body structs.Data, awsClient *dynamodb.DynamoDB) {
 	// Create the item to add to DynamoDB on AWS
 	item := createItemForAWS(body)
@@ -139,4 +133,24 @@ func PutItemInput(tableName string, body structs.Data, awsClient *dynamodb.Dynam
 		log.Fatalf("Got error calling PutItem: %s", err)
 	}
 	fmt.Println("Successfully added to table " + tableName)
+}
+
+func createItemForAWS(data structs.Data) structs.Item {
+	// Create a new item to send to DynamoDB
+	var item structs.Item
+	valueItem := reflect.ValueOf(&item).Elem()
+
+	// Get the values of "Location" and "Current" structs in "Data" struct,
+	// then pass them into "Item" struct
+	fieldNames := []string{"Location", "Current"}
+	for _, fieldName := range fieldNames {
+		table, _ := reflections.GetField(data, fieldName)
+		values := reflect.ValueOf(table)
+		types := values.Type()
+		for i := 0; i < values.NumField(); i++ {
+			valueItem.FieldByName(types.Field(i).Name).Set(values.Field(i))
+		}
+	}
+
+	return item
 }
