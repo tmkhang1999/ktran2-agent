@@ -1,11 +1,11 @@
 package utils
 
 import (
-	"CSC482/structs"
 	"encoding/json"
 	"github.com/jamespearly/loggly"
 	"io/ioutil"
 	"log"
+	"main.go/structs"
 	"net/http"
 	"strconv"
 )

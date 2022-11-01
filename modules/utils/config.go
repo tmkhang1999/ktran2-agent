@@ -1,10 +1,10 @@
 package utils
 
 import (
-	"CSC482/structs"
 	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 	"log"
+	"main.go/structs"
 	"os"
 	"strings"
 )
