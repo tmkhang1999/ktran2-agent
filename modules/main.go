@@ -18,7 +18,7 @@ func main() {
 	// Instantiate the loggly client and the http client
 	logglyClient := loggly.New("Weather-App")
 	weatherClient := http.Client{Timeout: time.Second * 2}
-	awsClient := utils.CreateDynamoDBClient(config.Region)
+	awsClient := utils.CreateDynamoDBClient()
 
 	// Set up the AWS table
 	utils.SetUpTableAWS(config.TableName, awsClient)

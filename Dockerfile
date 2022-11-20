@@ -17,7 +17,6 @@ WORKDIR /app2
 
 # Copy the executable binary file, env file and config file from the last stage to the new stage
 COPY --from=builder /app1/weather .
-COPY .env .
 COPY config.yaml .
 
 # Execute the build
