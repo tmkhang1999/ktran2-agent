@@ -5,6 +5,7 @@ import (
 	"log"
 	"main.go/utils"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -21,13 +22,13 @@ func main() {
 	awsClient := utils.CreateDynamoDBClient()
 
 	// Set up the AWS table
-	utils.SetUpTableAWS(config.TableName, awsClient)
+	utils.SetUpTableAWS(config.TableName, awsClient, logglyClient)
 
 	count := 0
 	for true {
 		for _, city := range config.Query {
 			// Create a new request using http
-			request := utils.CreateRequest(config.Url, config.Method, config.AccessKey, city)
+			request := utils.CreateRequest(config.Url, config.Method, os.Getenv("ACCESS_KEY"), city)
 
 			// Send get requests to the provided API
 			body := utils.GetDataFromAPI(request, weatherClient, logglyClient)
@@ -36,7 +37,7 @@ func main() {
 			data := utils.UnmarshallData(body, logglyClient)
 
 			// Put the data into the DynamoDB on AWS cloud
-			utils.PutItemInput(config.TableName, data, awsClient)
+			utils.PutItemInput(config.TableName, data, awsClient, logglyClient)
 
 			// Count the request sending times
 			count++

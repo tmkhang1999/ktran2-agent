@@ -3,7 +3,6 @@ package utils
 import (
 	"github.com/spf13/viper"
 	"main.go/structs"
-	"os"
 	"strings"
 )
 
@@ -21,9 +20,6 @@ func LoadConfig(path string, fileName string) (config structs.Config, err error)
 	viper.SetConfigName(split[0])
 	viper.SetConfigType(split[1])
 	viper.AutomaticEnv()
-
-	// Load environment variables
-	config.AccessKey = os.Getenv("ACCESS_KEY")
 
 	err = viper.ReadInConfig()
 	if err != nil {

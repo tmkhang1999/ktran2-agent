@@ -29,19 +29,11 @@ func sendingLoggy(client *loggly.ClientType, msgType string, msg string) {
 func GetDataFromAPI(request *http.Request, weatherClient http.Client, logglyClient *loggly.ClientType) []byte {
 	// Send req using http Client
 	resp, sendErr := weatherClient.Do(request)
-	if sendErr == nil {
-		sendingLoggy(logglyClient, "info", "Successfully send the request to API")
-	} else {
-		sendingLoggy(logglyClient, "error", "Failed with error: "+sendErr.Error())
-	}
+	HandleException(logglyClient, sendErr, "Successfully send the request to API")
 
 	//Read the response body
 	body, readErr := ioutil.ReadAll(resp.Body)
-	if readErr == nil {
-		sendingLoggy(logglyClient, "info", "Successfully read the response body")
-	} else {
-		sendingLoggy(logglyClient, "error", "Failed with error: "+readErr.Error())
-	}
+	HandleException(logglyClient, readErr, "Successfully collect the data and read the response body")
 
 	return body
 }
@@ -50,11 +42,7 @@ func UnmarshallData(body []byte, logglyClient *loggly.ClientType) structs.Data {
 	//Unmarshall the response into the data structure
 	var data structs.Data
 	unmarshallErr := json.Unmarshal(body, &data)
-	if unmarshallErr == nil {
-		sendingLoggy(logglyClient, "info", "Successfully unmarshall the response body into the data structure")
-	} else {
-		sendingLoggy(logglyClient, "error", "Failed with error: "+unmarshallErr.Error())
-	}
+	HandleException(logglyClient, unmarshallErr, "Successfully unmarshall the response body into the data structure")
 
 	// Print the data on the console
 	formattedData, _ := json.MarshalIndent(data, "", "    ")
