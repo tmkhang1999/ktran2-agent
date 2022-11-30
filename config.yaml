@@ -10,6 +10,6 @@ QUERY:
   - "Boston"
   - "Austin"
   - "Toronto"
-TIME: 60
+TIME: 24
 TABLENAME: "ktran2_weather_v1"
 REGION: "us-east-1"

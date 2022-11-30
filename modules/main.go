@@ -43,6 +43,6 @@ func main() {
 			count++
 			log.Printf("This is the time %v the GET request is sent\n", count)
 		}
-		time.Sleep(config.Time * time.Minute)
+		time.Sleep(config.Time * time.Hour)
 	}
 }
