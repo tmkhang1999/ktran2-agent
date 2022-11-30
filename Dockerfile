@@ -1,7 +1,7 @@
 ## First stage - Build stage
 # Pull golang image from Dockerhub
 # FROM golang:alpine AS builder
-FROM public.ecr.aws/docker/library/golang:alpine3.16
+FROM public.ecr.aws/docker/library/golang:alpine3.16 AS builder
 
 # Set up the working directory
 WORKDIR /app1
