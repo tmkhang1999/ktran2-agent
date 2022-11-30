@@ -1,6 +1,7 @@
 ## First stage - Build stage
 # Pull golang image from Dockerhub
-FROM golang:alpine AS builder
+# FROM golang:alpine AS builder
+FROM public.ecr.aws/docker/library/golang:alpine3.16
 
 # Set up the working directory
 WORKDIR /app1
@@ -10,7 +11,8 @@ COPY ./modules .
 RUN go build -o weather .
 
 ## Second stage - Run stage
-FROM alpine:latest
+# FROM alpine:latest
+FROM public.ecr.aws/docker/library/golang:alpine3.16
 
 # Set up the working directory
 WORKDIR /app2
